@@ -28,7 +28,7 @@ public class AudioConsumer {
         try (KafkaConsumer<String, byte[]> consumer = new KafkaConsumer<>(props)) {
             consumer.subscribe(Collections.singleton("audio-topic"));
             while (true) {
-                // Poll for messages
+                // Polling for messages
                 ConsumerRecords<String, byte[]> records = consumer.poll(1000);
                 for (ConsumerRecord<String, byte[]> record : records) {
                     byte[] audioBytes = record.value();

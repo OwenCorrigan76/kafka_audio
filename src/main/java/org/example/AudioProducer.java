@@ -31,7 +31,7 @@ public class AudioProducer {
             AudioSystem.write(audioInputStream, AudioFileFormat.Type.WAVE, byteArrayOutputStream);
             byte[] audioBytes = byteArrayOutputStream.toByteArray();
 
-            // Send audio bytes to Kafka
+            // Sending audio bytes to Kafka
             ProducerRecord<String, byte[]> record = new ProducerRecord<>("audio-topic", "audio-key", audioBytes);
             producer.send(record);
 
