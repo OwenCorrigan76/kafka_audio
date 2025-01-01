@@ -10,26 +10,24 @@ import javax.sound.sampled.*;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Properties;
 
 public class AudioConsumer {
     private static final Logger logger = LoggerFactory.getLogger(AudioProducer.class);
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         logger.info("SLF4J is initialized correctly.");
 
-        Properties props = new Properties();
-        props.put("bootstrap.servers", "localhost:9092");
-        props.put("group.id", "audio-group");
-        props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-        props.put("value.deserializer", "org.apache.kafka.common.serialization.ByteArrayDeserializer");
+        ConsumerConfig config = ConsumerConfig.configs();
+        Properties props = config.getProperties();
 
         try (KafkaConsumer<String, byte[]> consumer = new KafkaConsumer<>(props)) {
-            consumer.subscribe(Collections.singleton("audio-topic"));
+            consumer.subscribe(Collections.singleton(config.getTopic()));
             while (true) {
                 // Polling for messages
-                ConsumerRecords<String, byte[]> records = consumer.poll(1000);
+                ConsumerRecords<String, byte[]> records = consumer.poll(config.getDelay());
                 for (ConsumerRecord<String, byte[]> record : records) {
                     byte[] audioBytes = record.value();
                     // Save received bytes as a WAV file
